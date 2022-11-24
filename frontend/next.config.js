@@ -4,7 +4,7 @@ const nextConfig = {
   swcMinify: true,
   exportPathMap: (defaultPathMap) => defaultPathMap,
   env: {
-    NEXT_PUBLIC_API_BASE: 'http://localhost:8080/api'
+    NEXT_PUBLIC_API_BASE: '/api'
   }
 }
 
