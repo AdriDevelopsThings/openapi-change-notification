@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/adridevelopsthings/openapi-change-notification/apierrors"
 	"github.com/adridevelopsthings/openapi-change-notification/email"
 	"github.com/adridevelopsthings/openapi-change-notification/openapi"
 	"gorm.io/gorm"
@@ -83,6 +84,17 @@ func FinishEmailVerification(db *gorm.DB, code string) bool {
 	return true
 }
 
+func CheckIfEmailIsVerified(db *gorm.DB, email string) bool {
+	var verification EmailVerification
+	if err := db.Where("email = ?", email).
+		First(&verification).Error; err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+		return false
+	} else {
+		return true
+
+	}
+}
+
 func GetFetchingSubscriptions(db *gorm.DB) []Subscription {
 	var subscriptions []Subscription
 	db.
@@ -94,8 +106,11 @@ func GetFetchingSubscriptions(db *gorm.DB) []Subscription {
 	return subscriptions
 }
 
-func Unsubscribe(db *gorm.DB, mailDialer *email.MailDialer, emailAddress string) *UnsubscribeVerification {
+func Unsubscribe(db *gorm.DB, mailDialer *email.MailDialer, emailAddress string) (*UnsubscribeVerification, *apierrors.OpenApiChangeNotificationError) {
 	var verification UnsubscribeVerification
+	if !CheckIfEmailIsVerified(db, emailAddress) {
+		return nil, apierrors.BadRequestError
+	}
 	if err := db.
 		Where("email = ?", emailAddress).
 		First(&verification).Error; err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
@@ -110,7 +125,7 @@ func Unsubscribe(db *gorm.DB, mailDialer *email.MailDialer, emailAddress string)
 		db.Delete(&verification)
 		return Unsubscribe(db, mailDialer, emailAddress)
 	}
-	return &verification
+	return &verification, nil
 }
 
 func FinishUnsubscribeVerification(db *gorm.DB, code string) bool {

@@ -55,12 +55,20 @@ type UnsubscribeArguments struct {
 
 func unsubscribe(c *gin.Context) {
 	emailAddress := c.Query("email")
+	if !emailRegex.MatchString(emailAddress) {
+		apierrors.BadRequestError.Abort(c)
+		return
+	}
 	ctx := BuildContext()
-	database.Unsubscribe(
+	_, err := database.Unsubscribe(
 		database.GetDatabaseByContext(ctx),
 		email.GetDialerFromContext(ctx),
 		emailAddress,
 	)
+	if err != nil {
+		err.Abort(c)
+		return
+	}
 	c.JSON(200, gin.H{
 		"status": "success",
 	})
