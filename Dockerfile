@@ -46,6 +46,7 @@ ENV SMTP_SERVER=
 ENV SMTP_USERNAME=
 ENV SMTP_PASSWORD=
 ENV SMTP_FROM_ADDRESS=
+ENV HCAPTCHA_SECRET=
 
 COPY --from=backend-build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=backend-build /build/main /dist/main

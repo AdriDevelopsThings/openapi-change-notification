@@ -44,3 +44,5 @@ var SubscriptionNotFound = &OpenApiChangeNotificationError{"subscription_not_fou
 
 var EmailVerificationCodeError = &OpenApiChangeNotificationError{"email_verification_code_error", 404}
 var UnsubscribeVerificationCodeError = &OpenApiChangeNotificationError{"unsubscribe_verification_code_error", 404}
+
+var InvalidHCaptchaError = &OpenApiChangeNotificationError{"invalid_hcaptcha_error", 400}

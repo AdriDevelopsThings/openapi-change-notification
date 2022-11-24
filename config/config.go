@@ -23,6 +23,7 @@ type Config struct {
 	SMTPUsername                        string
 	SMTPPassword                        string
 	SMTPFromAddress                     string
+	HCaptchaSecret                      string
 }
 
 var CurrentConfig *Config
@@ -48,6 +49,7 @@ func LoadConfig() {
 		SMTPUsername:                        os.Getenv("SMTP_USERNAME"),
 		SMTPPassword:                        os.Getenv("SMTP_PASSWORD"),
 		SMTPFromAddress:                     os.Getenv("SMTP_FROM_ADDRESS"),
+		HCaptchaSecret:                      os.Getenv("HCAPTCHA_SECRET"),
 	}
 	if CurrentConfig.Environment == "" {
 		fmt.Printf("No environment set: Using development\n")
@@ -88,6 +90,10 @@ func LoadConfig() {
 	if CurrentConfig.FrontendUnsubscribeVerificationPath == "" {
 		fmt.Printf("No frontend unsubscribe verification path set: Using development default /unsubscribe/verify?code=CODE\n")
 		CurrentConfig.FrontendUnsubscribeVerificationPath = "/unsubscribe/verify?code=CODE"
+	}
+
+	if CurrentConfig.HCaptchaSecret == "" {
+		fmt.Printf("WARNING: No hcaptcha secret set: Hcaptcha verification is not available.\n")
 	}
 
 	smtpPort := os.Getenv("SMTP_PORT")

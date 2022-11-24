@@ -2,12 +2,14 @@ import { useState } from 'react'
 import Swal from 'sweetalert2'
 import styles from '../styles/index.module.css'
 import errorSwal from '../utils/errorSwal'
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 export default function Home() {
   const [email, setEmail] = useState('')
   const [openApiUrl, setOpenApiUrl] = useState('')
   const [openApiPath, SetOpenApiPath] = useState('')
   const [method, setMethod] = useState('GET')
+  const [hcaptcha, setHcaptcha] = useState('')
 
   return (
     <div className='container'>
@@ -18,7 +20,8 @@ export default function Home() {
           email,
           openapi_url: openApiUrl,
           path: openApiPath,
-          method
+          method,
+          "h-captcha-response": hcaptcha
         }
         Swal.showLoading(null)
         fetch(process.env.NEXT_PUBLIC_API_BASE + '/subscribe', {
@@ -90,6 +93,14 @@ export default function Home() {
             <option>TRACE</option>
             <option>PATCH</option>
           </select>
+        </div>
+        <div className={'form-group ' + styles.input_field}>
+          <HCaptcha
+            sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
+            onVerify={(t, ek) => {
+              setHcaptcha(t)
+            }}
+          />
         </div>
         <button type="submit" className={"btn btn-primary " + styles.input_field}>Submit</button>
       </form>

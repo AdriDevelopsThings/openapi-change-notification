@@ -9,10 +9,11 @@ import (
 )
 
 type SubscribeArguments struct {
-	Email      string `json:"email"`
-	OpenApiUrl string `json:"openapi_url"`
-	Path       string `json:"path"`
-	Method     string `json:"method"`
+	Email         string `json:"email"`
+	OpenApiUrl    string `json:"openapi_url"`
+	Path          string `json:"path"`
+	Method        string `json:"method"`
+	HCaptchaToken string `json:"h-captcha-response"`
 }
 
 func subscribePath(c *gin.Context) {
@@ -23,6 +24,15 @@ func subscribePath(c *gin.Context) {
 		!pathRegex.MatchString(arguments.Path) ||
 		!methodRegex.MatchString(arguments.Method) {
 		apierrors.BadRequestError.Abort(c)
+		return
+	}
+	hverified, err := VerifyHCaptcha(arguments.HCaptchaToken)
+	if err != nil {
+		apierrors.AbortError(c, err)
+		return
+	}
+	if !hverified {
+		apierrors.InvalidHCaptchaError.Abort(c)
 		return
 	}
 	apiMeaning := openapi.OpenAPIMeaning{URL: arguments.OpenApiUrl}
