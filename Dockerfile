@@ -19,7 +19,7 @@ RUN pnpm next export
 FROM golang:alpine as backend-dependencies
 WORKDIR /build
 
-RUN apk add build-base
+RUN apk --no-cache add build-base ca-certificates
 
 COPY ./go.mod ./go.sum ./
 
@@ -47,6 +47,7 @@ ENV SMTP_USERNAME=
 ENV SMTP_PASSWORD=
 ENV SMTP_FROM_ADDRESS=
 
+COPY --from=backend-build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=backend-build /build/main /dist/main
 COPY --from=frontend-build /app/out /dist/static
 
