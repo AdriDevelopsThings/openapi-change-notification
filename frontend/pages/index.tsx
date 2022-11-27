@@ -34,7 +34,7 @@ export default function Home() {
             if (Object.hasOwn(j, 'error')) {
               errorSwal(j.error)
             } else {
-              Swal.fire('Success', 'You successfuly subscribed to this openapi path. If you are using this service for the first time check your mailbox for a verification email.', 'success')
+              Swal.fire('Success', 'You successfuly subscribed to this openapi path. If you are using this service for the first time check your mailbox (and spam folder) for a verification email.', 'success')
             }
           }).catch(e => {
             errorSwal('default')
